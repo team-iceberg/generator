@@ -1,4 +1,4 @@
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
 @Injectable()
@@ -10,10 +10,6 @@ export class RegistrationGeneratorService {
     generateRegistration(file: File) {
         const formData = new FormData();
         formData.append('file', file, file.name);
-        this.http.post<void>('generator/membership', formData)
-            .toPromise()
-            .catch((err: HttpErrorResponse) => {
-                console.log(err);
-            });
+        this.http.get<void>('generator/membership').subscribe();
     }
 }
