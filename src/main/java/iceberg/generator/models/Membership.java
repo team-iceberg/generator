@@ -41,6 +41,4 @@ public class Membership {
     private boolean isOfficeMember;
 
     private String yearOfMedicalCertificate;
-
-    public static final String SEPARATOR = ";";
 }
