@@ -14,5 +14,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: red;
+
+  ::ng-deep circle{
+    stroke: rgb(32, 144, 199);
+  }
 }

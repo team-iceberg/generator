@@ -1,6 +1,7 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 import {environment} from '../../../../environments/environment';
 import {SpinnerStore} from '../../stores/spinner/spinner.store';
@@ -20,6 +21,13 @@ export class UrlInterceptor implements HttpInterceptor {
             url = `${environment.BASE_URL}${req.url}`;
         }
         const newRequest = req.clone({url});
-        return next.handle(newRequest);
+        return next.handle(newRequest).pipe(
+            tap(evt => {
+                this.spinnerStore.deactivate()
+            }, (err: any) => {
+                console.log(err);
+                this.spinnerStore.deactivate();
+            })
+        );
     }
 }
