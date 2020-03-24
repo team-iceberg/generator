@@ -1,6 +1,7 @@
-<input #fileInput
-       (change)="uploadFile($event.target.files)"
-       accept=".csv"
-       id="file"
-       style="display: none"
-       type="file">
+<div>
+    <input #fileInput
+           (change)="uploadFile($event.target.files)"
+           accept=".csv"
+           id="file"
+           type="file">
+</div>
