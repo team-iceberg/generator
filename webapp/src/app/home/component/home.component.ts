@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {NgxFileDropEntry, FileSystemFileEntry} from 'ngx-file-drop';
 import {RegistrationGeneratorService} from '../../services/registration-generator.service';
 
 @Component({
@@ -8,10 +9,32 @@ import {RegistrationGeneratorService} from '../../services/registration-generato
 })
 export class HomeComponent {
 
+    public files: NgxFileDropEntry[] = [];
+
     constructor(private registrationGeneratorService: RegistrationGeneratorService) {
     }
 
-    uploadFile(files: FileList) {
-        this.registrationGeneratorService.generateRegistration(files.item(0));
+    public dropped(files: NgxFileDropEntry[]) {
+        files.every(droppedFile => {
+            if (droppedFile.fileEntry.isFile) {
+                const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+                fileEntry.file((file: File) => {
+                    if (this.isXlsxFile(file.name)) {
+                        this.registrationGeneratorService.generateRegistration(file);
+                    } else {
+                        console.log('Le fichier doit être un fichier excel .XLSX')
+                    }
+                });
+            } else {
+                console.log('Ce n\'est pas un fichier');
+                return;
+            }
+        });
+    }
+
+    private isXlsxFile(name: string) {
+        const splitName = name.split('.');
+        const extension = splitName[splitName.length - 1];
+        return extension === 'xlsx';
     }
 }
