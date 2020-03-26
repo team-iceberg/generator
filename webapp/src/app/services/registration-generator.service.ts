@@ -10,6 +10,6 @@ export class RegistrationGeneratorService {
     generateRegistration(file: File) {
         const formData = new FormData();
         formData.append('file', file, file.name);
-        this.http.get<void>('generator/membership').subscribe();
+        this.http.post<void>('generator/membership/file', formData).subscribe();
     }
 }
