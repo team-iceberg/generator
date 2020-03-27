@@ -1,7 +1,8 @@
-<div>
-    <input #fileInput
-           (change)="uploadFile($event.target.files)"
-           accept=".csv"
-           id="file"
-           type="file">
+<div class="center">
+    <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            <mat-icon class="material-icons">cloud_upload</mat-icon>
+            <button type="button" (click)="openFileSelector()">Choisir un fichier</button>
+        </ng-template>
+    </ngx-file-drop>
 </div>

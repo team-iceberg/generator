@@ -4,11 +4,14 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SpinnerStore} from '../tools/stores/spinner/spinner.store';
 import {MaterialModule} from './material/material.module';
 import {SpinnerComponent} from './spinner/spinner.component';
+import {CustomToastComponent} from './toast/custom-toast.component';
+import {ToastService} from './toast/toast.service';
 
 
 @NgModule({
     declarations: [
-        SpinnerComponent
+        SpinnerComponent,
+        CustomToastComponent
     ],
     imports: [
         CommonModule,
@@ -16,9 +19,9 @@ import {SpinnerComponent} from './spinner/spinner.component';
         ReactiveFormsModule,
         MaterialModule
     ],
-    entryComponents: [SpinnerComponent],
+    entryComponents: [SpinnerComponent, CustomToastComponent],
     exports: [SpinnerComponent],
-    providers: [SpinnerStore]
+    providers: [SpinnerStore, ToastService]
 })
 
 export class SharedModule {

@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller to manage membership
@@ -17,8 +19,8 @@ public class MembershipController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MembershipController.class);
 
-    @GetMapping
-    public ResponseEntity getMemberships() {
+    @PostMapping(value = "/file")
+    public ResponseEntity getMemberships(@RequestPart("file") MultipartFile file) {
         LOGGER.info("Get list of membership after treatment");
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
