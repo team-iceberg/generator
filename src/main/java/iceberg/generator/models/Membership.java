@@ -1,15 +1,11 @@
 package iceberg.generator.models;
 
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Setter
 @Getter
@@ -18,27 +14,24 @@ import java.util.Map;
 @AllArgsConstructor
 public class Membership {
 
-    private int id;
+  private String name;
 
-    private String name;
+  private String birthdate;
 
-    private String birthdate;
+  private String mail;
 
-    private String startYear;
+  private String phoneNumber;
 
-    private String guardianName;
+  private String address;
 
-    private String mail;
+  private String city;
 
-    private String phoneNumber;
+  private String entryNumber;
 
-    private String address;
-
-    private String city;
-
-    private boolean isMonitor;
-
-    private boolean isOfficeMember;
-
-    private String yearOfMedicalCertificate;
+  public boolean hasError() {
+    return Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(birthdate)
+        || Strings.isNullOrEmpty(mail) || Strings.isNullOrEmpty(phoneNumber)
+        || Strings.isNullOrEmpty(address) || Strings.isNullOrEmpty(city)
+        || Strings.isNullOrEmpty(entryNumber);
+  }
 }

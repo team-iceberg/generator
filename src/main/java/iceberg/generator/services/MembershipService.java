@@ -1,12 +1,21 @@
 package iceberg.generator.services;
 
+import iceberg.generator.exceptions.ServiceException;
 import iceberg.generator.models.Membership;
-import org.springframework.http.codec.multipart.FilePart;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Membership service interface
+ */
 public interface MembershipService {
 
-    List<Membership> getMemberships(FilePart file) throws IOException;
+  /**
+   * Manage uploaded memberships file
+   * @param file memberships file input stream
+   * @return Memberships list
+   * @throws ServiceException when an error occurs
+   */
+  List<Membership> getMemberships(InputStream file) throws ServiceException;
 }
