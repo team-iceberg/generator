@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import iceberg.generator.exceptions.MembershipFileException;
 import iceberg.generator.exceptions.ServiceException;
 import iceberg.generator.models.Membership;
+import iceberg.generator.services.GeneratePdfService;
 import iceberg.generator.services.MembershipService;
 import java.io.IOException;
 import java.io.InputStream;
