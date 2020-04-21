@@ -16,7 +16,6 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import iceberg.generator.exceptions.ServiceException;
 import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Stream;
@@ -81,10 +79,10 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     private Document generatePdf(FileOutputStream fos, Family family) throws IOException, DocumentException, URISyntaxException {
         Document document = new Document();
         document.setMargins(15, 15, 15, 5);
-        PdfWriter writer = PdfWriter.getInstance(document, fos);
+        //        PdfWriter writer = PdfWriter.getInstance(document, fos);
 
-//        Cette ligne permet de generer le fichier en local avec le test
-//        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("test_fiche_réinscription.pdf"));
+        //        Cette ligne permet de generer le fichier en local avec le test
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("test_fiche_réinscription.pdf"));
 
         document.open();
 
@@ -95,10 +93,10 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
 
         Phrase footer = new Phrase("Association Les Sympathiques - Place Robert Devos, 59940 Neuf-Berquin - associationslessympathiques@gmail.com",
                 FONT_SMALL);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, footer, 300, 10, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, footer, 300, 15, 0);
 
         //        Cette ligne permet de generer le fichier en local avec le test
-//        document.getJavaScript_onLoad();
+        document.getJavaScript_onLoad();
 
         document.close();
         return document;
@@ -111,6 +109,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         table.addCell(getLogo());
         table.addCell(getTitle(family));
         table.setHorizontalAlignment(0);
+        table.setSpacingAfter(-10);
         document.add(table);
     }
 
@@ -124,17 +123,10 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     }
 
     private PdfPCell getTitle(Family family) {
-        Chunk title = new Chunk("Fiche de réinscription année : ", FONT_TITLE_1);
+        Chunk title = new Chunk("Fiche de réinscription année : " + getYears() + "\n____________________", FONT_TITLE_1);
         Paragraph titleParagraph = new Paragraph();
         titleParagraph.add(title);
         titleParagraph.setAlignment(Element.ALIGN_CENTER);
-        titleParagraph.setSpacingAfter(5);
-
-        DottedLineSeparator dottedline = new DottedLineSeparator();
-        dottedline.setOffset(-15);
-        dottedline.setGap(0f);
-        dottedline.setLineWidth(-10);
-        dottedline.setPercentage(50);
 
         String familyName = "Famille : " + family.getLastname();
         String guardian = "\nResponsable légal :";
@@ -147,11 +139,10 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
 
         Paragraph generalInformationParagraph = new Paragraph();
         generalInformationParagraph.add(generalInformation);
-        generalInformationParagraph.setSpacingBefore(20);
+        generalInformationParagraph.setSpacingBefore(10);
 
         PdfPCell cell = new PdfPCell();
         cell.addElement(titleParagraph);
-        cell.addElement(dottedline);
         cell.addElement(generalInformationParagraph);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
@@ -171,7 +162,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         Paragraph paragraph = new Paragraph();
         paragraph.add(chunk);
         paragraph.setAlignment(Element.ALIGN_CENTER);
-        paragraph.setSpacingAfter(5);
+        paragraph.setSpacingAfter(10);
         document.add(paragraph);
 
         PdfPTable table = new PdfPTable(5);
@@ -192,7 +183,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     }
 
     private void addMemberTableHeader(PdfPTable table) {
-        Stream.of("NOM, Prénom", "Date de naissance", "1ere Inscription", "Attestation ?", "Commentaire" ).forEach(columnTitle -> {
+        Stream.of("NOM, Prénom", "Date de naissance", "1ere Inscription", "Attestation ?", "Commentaire").forEach(columnTitle -> {
             Chunk chunk = new Chunk(columnTitle, FONT_SMALL);
             Paragraph para = new Paragraph();
             para.add(chunk);
@@ -229,13 +220,12 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
                 + "Facebook) pour une durée illimitée.\n", FONT_SMALL);
 
         Chunk signature = new Chunk("Fait à : ______________________________  Le : ______________________________\n"
-                + "Signature, précédée de la mention “Lu et approuvé” :\n\n", FONT_SMALL_BOLD);
+                + "Signature, précédée de la mention “Lu et approuvé” :\n\n\n", FONT_SMALL_BOLD);
 
         Paragraph paragraph = new Paragraph();
         paragraph.add(ruleText);
         paragraph.add(signature);
         paragraph.setMultipliedLeading(1.5f);
-        paragraph.setSpacingAfter(5);
 
         PdfPCell cell = new PdfPCell();
         cell.addElement(paragraph);
@@ -251,7 +241,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         Paragraph paymentTitleParagraph = new Paragraph();
         paymentTitleParagraph.add(paymentTitle);
         paymentTitleParagraph.setAlignment(Element.ALIGN_CENTER);
-        paymentTitleParagraph.setSpacingBefore(20);
+        paymentTitleParagraph.setSpacingBefore(10);
         document.add(paymentTitleParagraph);
 
         Chunk paymentRules = new Chunk("1er adhèrent = cotisation 65€\n" + "2ème adhérent (ou plus dans la même fratrie) = cotisation 50€",
