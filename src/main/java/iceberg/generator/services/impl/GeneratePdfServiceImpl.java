@@ -79,10 +79,10 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     private Document generatePdf(FileOutputStream fos, Family family) throws IOException, DocumentException, URISyntaxException {
         Document document = new Document();
         document.setMargins(15, 15, 15, 5);
-        //        PdfWriter writer = PdfWriter.getInstance(document, fos);
+                PdfWriter writer = PdfWriter.getInstance(document, fos);
 
         //        Cette ligne permet de generer le fichier en local avec le test
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("test_fiche_réinscription.pdf"));
+//        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("test_fiche_réinscription.pdf"));
 
         document.open();
 
@@ -96,7 +96,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, footer, 300, 15, 0);
 
         //        Cette ligne permet de generer le fichier en local avec le test
-        document.getJavaScript_onLoad();
+//        document.getJavaScript_onLoad();
 
         document.close();
         return document;

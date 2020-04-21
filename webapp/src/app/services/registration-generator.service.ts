@@ -11,7 +11,12 @@ export class RegistrationGeneratorService {
     generateRegistration(file: File) {
         const formData = new FormData();
         formData.append('file', file, file.name);
-        this.http.post<void>('generator/membership/file', formData).subscribe(value => {
+        this.http.post<any>('generator/membership/file', formData).subscribe(data => {
+                const blob = new Blob([data], {
+                    type: 'application/zip'
+                });
+                const url = window.URL.createObjectURL(blob);
+                window.open(url);
                 this.toastService.info('La génération des fiches en cours');
             },
             (err: HttpErrorResponse) => {
