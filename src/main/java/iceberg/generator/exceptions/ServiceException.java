@@ -3,7 +3,7 @@ package iceberg.generator.exceptions;
 /**
  * Exception thrown when an erro occur in a service
  */
-public class ServiceException extends Throwable {
+public class ServiceException extends RuntimeException {
 
   /**
    * Constructor

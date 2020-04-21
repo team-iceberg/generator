@@ -1,14 +1,18 @@
 package iceberg.generator.controllers;
 
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+
 import com.itextpdf.text.DocumentException;
 import iceberg.generator.exceptions.ServiceException;
 import iceberg.generator.models.Family;
 import iceberg.generator.services.GeneratePdfService;
 import iceberg.generator.services.MembershipService;
+import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +53,7 @@ public class MembershipController {
      * @return Memberships list
      */
     @PostMapping(value = "/file")
-    public ResponseEntity getRegistrations(@RequestPart("file") MultipartFile file) {
+    public ResponseEntity<byte[]> getRegistrations(@RequestPart("file") MultipartFile file) {
         LOGGER.info("Get list of membership after treatment");
         try {
             List<Family> families = membershipService.getMemberships(file.getInputStream());
@@ -58,19 +62,16 @@ public class MembershipController {
             FileOutputStream fos = new FileOutputStream(zip);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-            families.forEach(family -> {
-                try {
-                    createZipOutputStream(generatePdfService.createFile(family), zipOut);
-                } catch (IOException | DocumentException | URISyntaxException | ServiceException e) {
-                    e.printStackTrace();
-                    LOGGER.error("Une erreur est survenue lors de la régénration du PDF pour la famille %s", family.getLastname());
-                }
-            });
+            families.forEach(family -> createZipOutputStream(generatePdfService.createFile(family), zipOut));
 
             zipOut.close();
             fos.close();
-            return ResponseEntity.status(HttpStatus.OK).body(zip);
+            return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .header(CONTENT_DISPOSITION, "attachment; filename=\"" + zip.getName() + "\"")
+                .body(Files.readAllBytes(zip.toPath()));
         } catch (IOException | ServiceException e) {
+            LOGGER.error("Echec de l'export des fichiers de réinscription", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

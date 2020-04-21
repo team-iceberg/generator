@@ -14,15 +14,18 @@ export class UrlInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.spinnerStore.activate();
-        let url: string;
-        if (req.url.indexOf('i18n') === -1) {
-            url = `${environment.BACKEND_BASE_URL}${req.url}`;
+        let apiReq: HttpRequest<any> = req.clone();
+        if (req.url.indexOf('i18n') == -1) {
+            if (req.url.toString().indexOf("file") > -1) {
+                apiReq = req.clone({url: `${environment.BACKEND_BASE_URL}${req.url}`, responseType: 'blob'});
+            } else {
+                apiReq = req.clone({url: `${environment.BACKEND_BASE_URL}${req.url}`});
+            }
         } else {
-            url = `${environment.BASE_URL}${req.url}`;
+            apiReq = req.clone({url: `${environment.BASE_URL}${req.url}`});
         }
 
-        const newRequest = req.clone({url});
-        return next.handle(newRequest).pipe(
+        return next.handle(apiReq).pipe(
             tap(evt => {
                 this.spinnerStore.deactivate()
             }, (err: any) => {
