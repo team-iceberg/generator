@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import iceberg.generator.services.GeneratePdfService;
 import org.apache.logging.log4j.util.Strings;
@@ -57,7 +58,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     private static final Font FONT_SMALL_OBLIQUE = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.BLACK);
 
     @Override
-    public File createFile(Membership membership) throws DocumentException, URISyntaxException, ServiceException, FileNotFoundException {
+    public File createFile(Family family) throws DocumentException, URISyntaxException, ServiceException, FileNotFoundException {
         File file = null;
         try {
             file = File.createTempFile(Long.toString(System.currentTimeMillis()), Strings.EMPTY);
@@ -69,7 +70,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
 
         FileOutputStream fileOut = new FileOutputStream(file);
         try {
-            generatePdf(fileOut, membership);
+            generatePdf(fileOut, family);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,15 +78,18 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         return file;
     }
 
-    private Document generatePdf(FileOutputStream fos, Membership membership) throws IOException, DocumentException, URISyntaxException {
+    private Document generatePdf(FileOutputStream fos, Family family) throws IOException, DocumentException, URISyntaxException {
         Document document = new Document();
         document.setMargins(15, 15, 15, 5);
         PdfWriter writer = PdfWriter.getInstance(document, fos);
 
+//        Cette ligne permet de generer le fichier en local avec le test
+//        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("test_fiche_réinscription.pdf"));
+
         document.open();
 
-        setHeader(document, membership);
-        setMembers(document, membership);
+        setHeader(document, family);
+        setMembers(document, family.getMemberships());
         setRules(document);
         setPayment(document);
 
@@ -93,17 +97,19 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
                 FONT_SMALL);
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, footer, 300, 10, 0);
 
-        document.getJavaScript_onLoad();
+        //        Cette ligne permet de generer le fichier en local avec le test
+//        document.getJavaScript_onLoad();
+
         document.close();
         return document;
     }
 
-    private void setHeader(Document document, Membership membership) throws DocumentException, IOException, URISyntaxException {
+    private void setHeader(Document document, Family family) throws DocumentException, IOException, URISyntaxException {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setTotalWidth(new float[] { 1, 4 });
         table.addCell(getLogo());
-        table.addCell(getTitle(membership));
+        table.addCell(getTitle(family));
         table.setHorizontalAlignment(0);
         document.add(table);
     }
@@ -117,33 +123,27 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         return cell;
     }
 
-    private PdfPCell getTitle(Membership membership) {
-        Chunk title = new Chunk("Association Les SympathiquesAssociation\n", FONT_TITLE_1);
+    private PdfPCell getTitle(Family family) {
+        Chunk title = new Chunk("Fiche de réinscription année : ", FONT_TITLE_1);
         Paragraph titleParagraph = new Paragraph();
         titleParagraph.add(title);
         titleParagraph.setAlignment(Element.ALIGN_CENTER);
         titleParagraph.setSpacingAfter(5);
-
-        Chunk subTitle = new Chunk("Fiche de réinscription annèe : " + getYears(), FONT_TITLE_2);
-        Paragraph subTitleParagraph = new Paragraph();
-        subTitleParagraph.add(subTitle);
-        subTitleParagraph.setAlignment(Element.ALIGN_CENTER);
 
         DottedLineSeparator dottedline = new DottedLineSeparator();
         dottedline.setOffset(-15);
         dottedline.setGap(0f);
         dottedline.setLineWidth(-10);
         dottedline.setPercentage(50);
-        subTitleParagraph.add(dottedline);
 
-        String family = "Famille : " + membership.getName();
+        String familyName = "Famille : " + family.getLastname();
         String guardian = "\nResponsable légal :";
-        String address = "\nAdresse : " + membership.getAddress();
-        String city = "\nVille : " + membership.getCity();
-        String phone = "\nTél : " + membership.getPhoneNumber();
-        String mail = "\nMail : " + membership.getMail();
+        String address = "\nAdresse : " + family.getAddress();
+        String city = "\nVille : " + family.getCity();
+        String phone = "\nTél : " + family.getPhoneNumber();
+        String mail = "\nMail : " + family.getMail();
 
-        Chunk generalInformation = new Chunk(family + guardian + address + city + phone + mail, FONT_BOLD);
+        Chunk generalInformation = new Chunk(familyName + guardian + address + city + phone + mail, FONT_BOLD);
 
         Paragraph generalInformationParagraph = new Paragraph();
         generalInformationParagraph.add(generalInformation);
@@ -151,7 +151,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
 
         PdfPCell cell = new PdfPCell();
         cell.addElement(titleParagraph);
-        cell.addElement(subTitleParagraph);
+        cell.addElement(dottedline);
         cell.addElement(generalInformationParagraph);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
@@ -165,7 +165,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         return currentYear + "/" + nextYear;
     }
 
-    private void setMembers(Document document, Membership membership) throws DocumentException {
+    private void setMembers(Document document, List<Membership> memberships) throws DocumentException {
         Chunk chunk = new Chunk("Liste des adhérents :", FONT_BOLD);
         chunk.setUnderline(0.1f, -2f);
         Paragraph paragraph = new Paragraph();
@@ -174,12 +174,12 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         paragraph.setSpacingAfter(5);
         document.add(paragraph);
 
-        PdfPTable table = new PdfPTable(4);
-        table.setTotalWidth(new float[] { 3, 2, 2, 1 });
+        PdfPTable table = new PdfPTable(5);
+        table.setTotalWidth(new float[] { 2, 1.5f, 1, 0.8f, 2 });
         table.setWidthPercentage(100);
         table.setHorizontalAlignment(0);
         addMemberTableHeader(table);
-        addRowMembers(table, Arrays.asList(membership));
+        addRowMembers(table, memberships);
         document.add(table);
 
         Chunk chunkSmall = new Chunk("(Pour toute nouvelle inscription voir la liste d'attente lors du dépot de la fiche de réinscription)",
@@ -192,8 +192,8 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     }
 
     private void addMemberTableHeader(PdfPTable table) {
-        Stream.of("NOM, Prénom", "Date de naissance", "1ere Inscription", "Attestation").forEach(columnTitle -> {
-            Chunk chunk = new Chunk(columnTitle, FONT);
+        Stream.of("NOM, Prénom", "Date de naissance", "1ere Inscription", "Attestation ?", "Commentaire" ).forEach(columnTitle -> {
+            Chunk chunk = new Chunk(columnTitle, FONT_SMALL);
             Paragraph para = new Paragraph();
             para.add(chunk);
             para.setAlignment(Element.ALIGN_CENTER);
@@ -211,6 +211,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
             table.addCell(membership.getName());
             table.addCell(membership.getBirthdate());
             table.addCell(membership.getEntryNumber());
+            table.addCell("   ");
             table.addCell("   ");
             count[0]++;
         });
@@ -253,7 +254,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         paymentTitleParagraph.setSpacingBefore(20);
         document.add(paymentTitleParagraph);
 
-        Chunk paymentRules = new Chunk("1ère adhèrent = cotisation 65€\n" + "2ème adhérent (ou plus dans la même fratrie) = cotisation 50€",
+        Chunk paymentRules = new Chunk("1er adhèrent = cotisation 65€\n" + "2ème adhérent (ou plus dans la même fratrie) = cotisation 50€",
                 FONT_SMALL);
         paymentRules.setLineHeight(-10);
         Paragraph paymentRulesParagraph = new Paragraph();

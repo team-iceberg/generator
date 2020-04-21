@@ -2,6 +2,7 @@ package iceberg.generator.services.impl;
 
 import com.itextpdf.text.DocumentException;
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 @ExtendWith(SpringExtension.class)
 @RunWith(JUnitPlatform.class)
@@ -26,9 +28,24 @@ class GeneratePdfServiceImplTest {
 
     @Test
     void should_create_pdf() throws DocumentException, IOException, URISyntaxException, ServiceException {
-        Membership membership = Membership.builder().name("TEST NAME").birthdate("01/01/1970").entryNumber("2000").address("adresse test test").city(
-                "city test")
-                .phoneNumber("0123456789").mail("test@test.fr").build();
-        generatePdfService.createFile(membership);
+        Membership membershipA = Membership.builder().name("TEST A").birthdate("01/01/1970").entryNumber("2000").address("adresse test test")
+                .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
+
+        Membership membershipB = Membership.builder().name("TEST B").birthdate("01/01/1970").entryNumber("2000").address("adresse test test")
+                .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
+
+        Membership membershipC = Membership.builder().name("TEST C").birthdate("01/01/1970").entryNumber("2000").address("adresse test test")
+                .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
+
+        Membership membershipD = Membership.builder().name("TEST D").birthdate("01/01/1970").entryNumber("2000").address("adresse test test")
+                .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
+
+        Membership membershipE = Membership.builder().name("TEST E").birthdate("01/01/1970").entryNumber("2000").address("adresse test test")
+                .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
+
+        Family family = Family.builder().lastname("TEST").address("adresse test test").city("city test").phoneNumber("0123456789")
+                .mail("test@test.fr").memberships(Arrays.asList(membershipA, membershipB, membershipC, membershipD, membershipE)).build();
+
+        generatePdfService.createFile(family);
     }
 }
