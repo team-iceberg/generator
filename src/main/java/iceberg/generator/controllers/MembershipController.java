@@ -19,10 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Controller to manage membership
@@ -50,19 +54,40 @@ public class MembershipController {
         LOGGER.info("Get list of membership after treatment");
         try {
             List<Family> families = membershipService.getMemberships(file.getInputStream());
-            List<File> files = new ArrayList<>();
+
+            FileOutputStream fos = new FileOutputStream("sample.zip");
+            ZipOutputStream zipOS = new ZipOutputStream(fos);
+
             families.forEach(family -> {
                 try {
-                    files.add(generatePdfService.createFile(family));
+                    createZipFile(generatePdfService.createFile(family), zipOS);
                 } catch (IOException | DocumentException | URISyntaxException | ServiceException e) {
                     e.printStackTrace();
                     LOGGER.error("Une erreur est survenue lors de la régénration du PDF pour la famille %s", family.getLastname());
                 }
             });
 
-            return ResponseEntity.status(HttpStatus.OK).body(families);
+            zipOS.close();
+            fos.close();
+            return ResponseEntity.status(HttpStatus.OK).body(fos);
         } catch (IOException | ServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private void createZipFile(File file, ZipOutputStream zipStream) throws IOException {
+        System.out.println("Writing file : '" + file.getPath() + "' to zip file");
+
+        FileInputStream fis = new FileInputStream(file);
+        ZipEntry zipEntry = new ZipEntry(file.getPath());
+        zipStream.putNextEntry(zipEntry);
+        byte[] bytes = new byte[1024];
+        int length;
+
+        while ((length = fis.read(bytes)) >= 0) {
+            zipStream.write(bytes, 0, length);
+        }
+        zipStream.closeEntry();
+        fis.close();
     }
 }

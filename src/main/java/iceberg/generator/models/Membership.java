@@ -30,7 +30,7 @@ public class Membership {
 
   public boolean hasError() {
     return Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(birthdate)
-        || Strings.isNullOrEmpty(mail) || Strings.isNullOrEmpty(phoneNumber)
+        || Strings.isNullOrEmpty(phoneNumber)
         || Strings.isNullOrEmpty(address) || Strings.isNullOrEmpty(city)
         || Strings.isNullOrEmpty(entryNumber);
   }
