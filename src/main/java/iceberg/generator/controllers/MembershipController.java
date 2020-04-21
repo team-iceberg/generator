@@ -77,7 +77,7 @@ public class MembershipController {
 
     private void createZipOutputStream(File file, ZipOutputStream zipOut) throws ServiceException {
         try (FileInputStream fis = new FileInputStream(file)) {
-            String name = file.getName().split("__")[0] + ".pdf";
+            String name = file.getName().split("_")[0] + ".pdf";
             ZipEntry zipEntry = new ZipEntry(name);
             zipOut.putNextEntry(zipEntry);
             byte[] bytes = new byte[1024];
@@ -89,19 +89,5 @@ public class MembershipController {
             LOGGER.error("Failed to create temporary zip file");
             throw new ServiceException("Failed to create temporary zip file");
         }
-    }
-
-    private void createZipFile(File file, ZipOutputStream zipStream) throws IOException {
-        System.out.println("Writing file : '" + file.getPath() + "' to zip file");
-        zipStream.putNextEntry(new ZipEntry(file.getName()));
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-        long bytesRead = 0;
-        byte[] bytesIn = new byte[4096];
-        int read = 0;
-        while ((read = bis.read(bytesIn)) != -1) {
-            zipStream.write(bytesIn, 0, read);
-            bytesRead += read;
-        }
-        zipStream.closeEntry();
     }
 }

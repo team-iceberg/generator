@@ -59,7 +59,7 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
     public File createFile(Family family) throws DocumentException, URISyntaxException, ServiceException, FileNotFoundException {
         File file = null;
         try {
-            file = File.createTempFile(Long.toString(System.currentTimeMillis()), Strings.EMPTY);
+            file = File.createTempFile(family.getLastname() + "_", ".pdf");
         } catch (IOException e) {
             String message = "Echec de la création du document";
             LOGGER.error(message);
@@ -72,7 +72,6 @@ public class GeneratePdfServiceImpl implements GeneratePdfService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return file;
     }
 
