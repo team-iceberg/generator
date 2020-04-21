@@ -1,6 +1,7 @@
 package iceberg.generator.services;
 
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,5 +18,5 @@ public interface MembershipService {
    * @return Memberships list
    * @throws ServiceException when an error occurs
    */
-  List<Membership> getMemberships(InputStream file) throws ServiceException;
+  List<Family> getMemberships(InputStream file) throws ServiceException;
 }

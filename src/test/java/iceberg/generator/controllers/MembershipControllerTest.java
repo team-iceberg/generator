@@ -2,6 +2,7 @@ package iceberg.generator.controllers;
 
 import com.itextpdf.text.DocumentException;
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import iceberg.generator.services.GeneratePdfService;
 import iceberg.generator.services.MembershipService;
@@ -46,16 +47,16 @@ class MembershipControllerTest {
     @Test
     void should_get_memberships_from_file() throws IOException, ServiceException, URISyntaxException, DocumentException {
         MultipartFile multipartFile = new MockMultipartFile("file", Resources.getInputStream("test.xlsx"));
-        List<Membership> memberships = new ArrayList<>();
+        List<Family> families = new ArrayList<>();
         File file = mock(File.class);
 
-        when(membershipService.getMemberships(multipartFile.getInputStream())).thenReturn(memberships);
-        when(generatePdfService.createFile(any(Membership.class))).thenReturn(file);
+        when(membershipService.getMemberships(multipartFile.getInputStream())).thenReturn(families);
+        when(generatePdfService.createFile(any(Family.class))).thenReturn(file);
 
         ResponseEntity<List<Membership>> listResponseEntity = membershipController.getRegistrations(multipartFile);
 
         assertThat(listResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(listResponseEntity.getBody()).isEqualTo(memberships);
+        assertThat(listResponseEntity.getBody()).isEqualTo(families);
 
     }
 

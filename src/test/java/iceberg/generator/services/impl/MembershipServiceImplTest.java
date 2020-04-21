@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import iceberg.generator.exceptions.MembershipFileException;
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import java.util.List;
 import org.apache.commons.codec.Resources;
@@ -28,12 +29,12 @@ class MembershipServiceImplTest {
 
   @Test
   void should_get_memberships() throws ServiceException {
-    List<Membership> memberships =
-        membershipService.getMemberships(Resources.getInputStream("test.xlsx"));
+    List<Family> families = membershipService.getMemberships(Resources.getInputStream("test.xlsx"));
 
-    assertThat(memberships).isNotNull();
-    assertThat(memberships.size()).isEqualTo(1);
-    Membership membership = memberships.get(0);
+    assertThat(families).isNotNull();
+    assertThat(families.size()).isEqualTo(1);
+    assertThat(families.get(0).getMemberships().size()).isEqualTo(2);
+    Membership membership = families.get(0).getMemberships().get(0);
     assertThat(membership.getName()).isEqualTo("Théo Jasmin");
     assertThat(membership.getBirthdate()).isEqualTo("02/02/2020");
     assertThat(membership.getAddress()).isEqualTo("3 rue des Vignes");

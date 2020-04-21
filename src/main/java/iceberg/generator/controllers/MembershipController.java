@@ -2,6 +2,7 @@ package iceberg.generator.controllers;
 
 import com.itextpdf.text.DocumentException;
 import iceberg.generator.exceptions.ServiceException;
+import iceberg.generator.models.Family;
 import iceberg.generator.models.Membership;
 import iceberg.generator.services.GeneratePdfService;
 import iceberg.generator.services.MembershipService;
@@ -48,18 +49,18 @@ public class MembershipController {
     public ResponseEntity getRegistrations(@RequestPart("file") MultipartFile file) {
         LOGGER.info("Get list of membership after treatment");
         try {
-            List<Membership> memberships = membershipService.getMemberships(file.getInputStream());
+            List<Family> families = membershipService.getMemberships(file.getInputStream());
             List<File> files = new ArrayList<>();
-            memberships.forEach(membership -> {
+            families.forEach(family -> {
                 try {
-                    files.add(generatePdfService.createFile(membership));
+                    files.add(generatePdfService.createFile(family));
                 } catch (IOException | DocumentException | URISyntaxException | ServiceException e) {
                     e.printStackTrace();
-                    LOGGER.error("Une erreur est survenue lors de la régénration du PDF pour le membre %s", membership.getName());
+                    LOGGER.error("Une erreur est survenue lors de la régénration du PDF pour la famille %s", family.getLastname());
                 }
             });
 
-            return ResponseEntity.status(HttpStatus.OK).body(memberships);
+            return ResponseEntity.status(HttpStatus.OK).body(families);
         } catch (IOException | ServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
