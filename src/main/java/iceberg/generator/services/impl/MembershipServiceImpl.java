@@ -38,21 +38,23 @@ public class MembershipServiceImpl implements MembershipService {
 
     private static final String SEMI_COLON = ";";
 
-    private static final int NAME_IDX = 2;
+    private static final int GROUPE_IDX = 0;
 
-    private static final int BIRTHDATE_IDX = 3;
+    private static final int NAME_IDX = 3;
 
-    private static final int ADDRESS_IDX = 4;
+    private static final int BIRTHDATE_IDX = 4;
 
-    private static final int CITY_IDX = 5;
+    private static final int ADDRESS_IDX = 5;
 
-    private static final int PHONE_IDX = 6;
+    private static final int CITY_IDX = 6;
 
-    private static final int MAIL_IDX = 8;
+    private static final int PHONE_IDX = 7;
 
-    private static final int ENTRY_IDX = 7;
+    private static final int MAIL_IDX = 9;
 
-    private static final int COLUMN_NB = 17;
+    private static final int ENTRY_IDX = 8;
+
+    private static final int COLUMN_NB = 18;
 
     @Override
     public List<Family> getMemberships(InputStream file) throws ServiceException {
@@ -81,7 +83,8 @@ public class MembershipServiceImpl implements MembershipService {
 
     private Membership getEntityFromLine(List<String> line) {
         return Membership.builder().address(line.get(ADDRESS_IDX)).birthdate(line.get(BIRTHDATE_IDX)).city(line.get(CITY_IDX))
-                .entryNumber(line.get(ENTRY_IDX)).mail(line.get(MAIL_IDX)).name(line.get(NAME_IDX)).phoneNumber(line.get(PHONE_IDX)).build();
+                .entryNumber(line.get(ENTRY_IDX)).mail(line.get(MAIL_IDX)).name(line.get(NAME_IDX)).groupe(line.get(GROUPE_IDX))
+                .phoneNumber(line.get(PHONE_IDX)).build();
     }
 
     private List<String> readXlsxFile(InputStream file) throws IOException {
@@ -136,8 +139,8 @@ public class MembershipServiceImpl implements MembershipService {
             List<Membership> memberships = extracted.stream().filter(membership -> membership.getAddress().equals(s)).collect(Collectors.toList());
             Membership oldMembership = getOldMembership(memberships);
 
-            return Family.builder().lastname(getLastName(Objects.requireNonNull(oldMembership).getName())).address(s).city(oldMembership.getCity())
-                    .mail(oldMembership.getMail()).phoneNumber(oldMembership.getPhoneNumber()).memberships(memberships).build();
+            return Family.builder().name(oldMembership.getName()).address(s).city(oldMembership.getCity())
+                    .mail(oldMembership.getMail()).phoneNumber(oldMembership.getPhoneNumber()).memberships(memberships).group(oldMembership.getGroupe()).build();
         }).collect(Collectors.toList());
     }
 
@@ -162,9 +165,5 @@ public class MembershipServiceImpl implements MembershipService {
         });
 
         return oldMembership[0];
-    }
-
-    private String getLastName(String name) {
-        return name.split(" ")[0];
     }
 }

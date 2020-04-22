@@ -16,7 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class Family {
 
-  private String lastname;
+  private String name;
+
+  private String group;
 
   private String mail;
 

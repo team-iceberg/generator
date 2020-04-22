@@ -50,7 +50,7 @@ class MembershipControllerTest {
     family1.setAddress(address1);
     String city1 = "city1";
     family1.setCity(city1);
-    family1.setLastname("last1");
+    family1.setName("last name");
     String mail1 = "mail1";
     family1.setMail(mail1);
     Membership membership1a = new Membership();
@@ -78,7 +78,7 @@ class MembershipControllerTest {
     family2.setAddress(address2);
     String city2 = "city2";
     family2.setCity(city2);
-    family2.setLastname("last2");
+    family2.setName("last2");
     String mail2 = "mail2";
     family2.setMail(mail2);
     Membership membership2a = new Membership();
@@ -139,7 +139,7 @@ class MembershipControllerTest {
     family1.setAddress(address1);
     String city1 = "city1";
     family1.setCity(city1);
-    family1.setLastname("last1");
+    family1.setName("last1");
     String mail1 = "mail1";
     family1.setMail(mail1);
     Membership membership1a = new Membership();

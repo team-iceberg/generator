@@ -44,7 +44,7 @@ class GeneratePdfServiceImplTest {
         .entryNumber("2000").address("adresse test test")
         .city("city test").phoneNumber("0123456789").mail("test@test.fr").build();
 
-    Family family = Family.builder().lastname("TEST").address("adresse test test").city("city test")
+    Family family = Family.builder().name("TEST").address("adresse test test").city("city test")
         .phoneNumber("0123456789")
         .mail("test@test.fr")
         .memberships(Arrays.asList(membershipA, membershipB, membershipC, membershipD, membershipE))

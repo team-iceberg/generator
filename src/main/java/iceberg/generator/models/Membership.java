@@ -16,6 +16,8 @@ public class Membership {
 
   private String name;
 
+  private String groupe;
+
   private String birthdate;
 
   private String mail;

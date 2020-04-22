@@ -87,7 +87,7 @@ public class MembershipController {
                 zipOut.write(bytes, 0, length);
             }
         } catch (IOException ioe) {
-            LOGGER.error("Failed to create temporary zip file");
+            LOGGER.error("Failed to create temporary zip file", ioe);
             throw new ServiceException("Failed to create temporary zip file");
         }
     }
