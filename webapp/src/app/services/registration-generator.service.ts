@@ -11,7 +11,7 @@ export class RegistrationGeneratorService {
     generateRegistration(file: File) {
         const formData = new FormData();
         formData.append('file', file, file.name);
-        this.http.post<any>('generator/membership/file', formData).subscribe(data => {
+        this.http.post<any>('generator/combination/file', formData).subscribe(data => {
                 const blob = new Blob([data], {
                     type: 'application/zip'
                 });
