@@ -82,6 +82,10 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     private Membership getEntityFromLine(List<String> line) {
+        String entryYear = line.get(ENTRY_IDX);
+        if(entryYear.equals("2020")){
+            return null;
+        }
         return Membership.builder().address(line.get(ADDRESS_IDX)).birthdate(line.get(BIRTHDATE_IDX)).city(line.get(CITY_IDX))
                 .entryNumber(line.get(ENTRY_IDX)).mail(line.get(MAIL_IDX)).name(line.get(NAME_IDX)).groupe(line.get(GROUPE_IDX))
                 .phoneNumber(line.get(PHONE_IDX)).build();
